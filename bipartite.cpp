@@ -1,56 +1,69 @@
 #include <iostream>
-
-#define M 6
-
-#define N 6
+#include <string.h>
 
 using namespace std;
 
-bool bipartiteGraph[M][N] = {
+bool isMatching(bool **graph, int t, bool visited[], int assigned[],int n) {
 
-{0, 1, 1, 0, 0, 1},
+	for (int p = 0; p < n; p++) {
 
-{1, 0, 0, 1, 0, 0},
+		if (graph[t][p] && visited[p] != true) {
 
-{0, 0, 1, 0, 0, 0},
+			visited[p] = true;
 
-{0, 0, 1, 1, 0, 0},
+			if (assigned[p] == -99 || isMatching(graph, assigned[p], visited, assigned,n)) {
 
-{0, 0, 0, 0, 0, 0},
+				assigned[p] = t;
 
-{0, 0, 0, 0, 0, 1}
-
-};
-bool bipartiteMax(int u, bool visited[], int a[]) { for (int v = 0; v < N; v++) {
-if (bipartiteGraph[u][v] && !visited[v]) { visited[v] = true;
-if (a[v] < 0 || bipartiteMax(a[v], visited, a)) { a[v] = u;
-return true;
-
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
+
+// this function returns the maximum number of matches that can be made in a bipartite graph
+int maximumMatching(bool**graph,int n) {
+
+	int a[n], t= 0;
+
+	bool visited[n];
+
+	for (int p= 0; p< n; p++)
+		a[p] = -99;
+
+	for (int q= 0; q< n; q++) {
+
+		for (int p = 0; p < n; p++)
+			visited[p] = false;
+
+		if (isMatching(graph, q, visited, a,n) == true)
+			t++;
+	}
+
+	return t;
 }
 
+// main code
+int main()
+{
+    cout<<"Enter the number of vertices\n";
+    int t;
+    cin>>t;
+    const int n=t;
+	bool **graph;
+	graph=new bool*[n];
+	cout<<"Enter the bipartite graph:\n";
+	for(int i=0;i<n;i++){
+        graph[i]=new bool[n];
+        for(int j=0;j<n;j++)
+        cin>>graph[i][j];
+	}
+
+
+	cout << "The maximum cover possible is:"<< maximumMatching(graph,n)/2<<endl;
+
+	return 0;
 }
 
-return false;
-
-}
-int maxMatch() {
-
-int a[N];
-for(int i = 0; i<N; i++) a[i] = -1;
-int Count = 0;
-for (int u = 0; u < M; u++) { bool visited[N];
-for(int i = 0; i<N; i++) visited[i] = false;
-if (bipartiteMax(u, visited, a)) Count++;
-}
-
-return Count;
-
-}
-
-int main() {
-
-cout << "Maximum number of applicants matching for a particular job: " << maxMatch();
-
-}
